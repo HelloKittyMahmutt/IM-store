@@ -14,15 +14,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email is required' });
     }
 
-    const data = await resend.emails.send({
-      from: 'IM <hello@imwearmovement.com>',
-      to: 'hello@imwearmovement.com',
-      subject: 'New Subscriber',
-      html: `<h1>New Subscriber</h1><p>Email: ${email}</p>`,
+    await resend.contacts.create({
+      email,
     });
 
-    return res.status(200).json({ success: true, data });
+    return res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: 'Failed to send email' });
+    console.error(error);
+    return res.status(500).json({ error: 'Failed to save email' });
   }
 }
