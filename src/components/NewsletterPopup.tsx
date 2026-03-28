@@ -29,21 +29,34 @@ export const NewsletterPopup: React.FC = () => {
     setTimeout(() => setIsOpen(false), 300);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!email) return;
 
-    // Here you would typically send the email to your backend/newsletter service
-    console.log('Subscribing email:', email);
-    
+  try {
+    const response = await fetch('/api/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to subscribe');
+    }
+
     setIsSubmitted(true);
     localStorage.setItem('hasSeenNewsletterPopup', 'true');
-    
-    // Close automatically after 2.5 seconds
+
     setTimeout(() => {
       handleClose();
     }, 2500);
-  };
+  } catch (error) {
+    console.error('Subscribe error:', error);
+    alert('Something went wrong. Please try again.');
+  }
+};
 
   if (!isOpen) return null;
 
