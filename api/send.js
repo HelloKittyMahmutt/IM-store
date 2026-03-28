@@ -16,9 +16,9 @@ export default async function handler(req, res) {
 
     const data = await resend.emails.send({
       from: 'IM <hello@imwearmovement.com>',
-      to: [email],
-      subject: "You're in",
-      html: '<h1>Welcome to IM</h1><p>You’ll be first to know when the drop is live.</p>',
+      to: 'hello@imwearmovement.com',
+      subject: 'New Subscriber',
+      html: `<h1>New Subscriber</h1><p>Email: ${email}</p>`,
     });
 
     return res.status(200).json({ success: true, data });
