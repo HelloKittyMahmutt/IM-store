@@ -72,7 +72,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-24 text-xs font-bold uppercase tracking-widest text-[#888888]">
-          <a href="https://www.instagram.com/im.alignedofficial/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors cursor-pointer">Instagram</a>
+          <a href="https://www.instagram.com/im.wear.movement/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors cursor-pointer">Instagram</a>
           <a href="mailto:contact@yourbrand.com" className="hover:text-white transition-colors cursor-pointer">Contact</a>
           <Link to="/terms" className="hover:text-white transition-colors cursor-pointer">Terms</Link>
           <Link to="/returns" className="hover:text-white transition-colors cursor-pointer">Returns</Link>
