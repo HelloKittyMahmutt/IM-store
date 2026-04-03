@@ -36,7 +36,7 @@ export const Checkout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black pt-32 pb-32">
+    <div className="min-h-screen bg-white text-black pt-40 pb-32">
       <div className="max-w-5xl mx-auto px-6">
         
         <div className="mb-12">
