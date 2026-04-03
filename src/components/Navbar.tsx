@@ -34,7 +34,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 w-full h-24 z-[100] transition-colors duration-300 border-b ${isScrolled || !isHome ? 'bg-[#050505]/98 backdrop-blur-md shadow-2xl border-white/10' : 'border-transparent'}`}>
+      <header className={`fixed top-8 left-0 w-full h-24 z-[100] transition-colors duration-300 border-b ${isScrolled || !isHome ? 'bg-[#050505]/98 backdrop-blur-md shadow-2xl border-white/10' : 'border-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between relative">
           
           {/* Mobile Toggle & Desktop Nav */}
