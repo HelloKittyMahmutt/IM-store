@@ -17,7 +17,7 @@ export const ProductDetails: React.FC = () => {
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Scroll handled by PageTransition
   }, [id]);
 
   // Prevent scrolling when modal is open
@@ -65,23 +65,23 @@ export const ProductDetails: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black pt-40 pb-32">
+    <div className="min-h-screen bg-white text-black pt-32 pb-8">
       <div className="max-w-7xl mx-auto px-6">
         
-        <div className="mb-12 pt-8">
+        <div className="mb-4">
           <button 
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:text-[#888888] transition-colors"
+            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest hover:text-[#888888] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back
+            <ArrowLeft className="w-3 h-3" /> Back
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           
           {/* Image Gallery */}
-          <div className="flex flex-col gap-4">
-            <div className="aspect-[3/4] relative">
+          <div className="flex flex-col gap-4 lg:sticky lg:top-32">
+            <div className="relative w-full h-[55vh] lg:h-[70vh]">
               <img 
                 src={product.images[activeImage]} 
                 alt={product.name} 
@@ -90,7 +90,7 @@ export const ProductDetails: React.FC = () => {
             </div>
             
             {product.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-4 gap-2">
                 {product.images.map((img, index) => (
                   <button 
                     key={index}
@@ -110,59 +110,61 @@ export const ProductDetails: React.FC = () => {
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4">
+            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-1">
               {product.name}
             </h1>
-            <p className="text-2xl font-mono mb-8">€{product.price}</p>
+            <p className="text-lg font-mono mb-4">€{product.price}</p>
             
-            <div className="w-full h-px bg-gray-200 mb-8"></div>
+            <div className="w-full h-px bg-gray-200 mb-4"></div>
             
-            <p className="text-gray-600 leading-relaxed mb-8">
+            <p className="text-sm text-gray-600 leading-relaxed mb-4">
               {product.description}
             </p>
 
             {product.quote && (
-              <div className="mb-8 py-4 border-l-2 border-black pl-6">
-                <p className="text-lg font-medium italic tracking-tight">
+              <div className="mb-4 py-2 border-l-2 border-black pl-4">
+                <p className="text-sm font-medium italic tracking-tight">
                   "{product.quote}"
                 </p>
               </div>
             )}
 
-            {product.details && (
-              <div className="mb-8">
-                <h4 className="text-sm font-bold uppercase tracking-widest mb-4">Details</h4>
-                <ul className="space-y-2 text-gray-600">
-                  {product.details.map((detail, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span className="block w-1 h-1 bg-black rounded-full mt-2.5 flex-shrink-0"></span>
-                      <span>{detail}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              {product.details && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-widest mb-3">Details</h4>
+                  <ul className="space-y-1.5 text-xs text-gray-600">
+                    {product.details.map((detail, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="block w-1 h-1 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-            {product.fit && (
-              <div className="mb-12">
-                <h4 className="text-sm font-bold uppercase tracking-widest mb-2">Fit</h4>
-                <p className="text-gray-600">{product.fit}</p>
-              </div>
-            )}
+              {product.fit && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-widest mb-3">Fit</h4>
+                  <p className="text-xs text-gray-600">{product.fit}</p>
+                </div>
+              )}
+            </div>
 
-            <div className="mb-12">
-              <div className="flex justify-between items-center mb-4">
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-4">
-                  <span className="text-sm font-bold uppercase tracking-widest">Select Size</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest">Select Size</span>
                   <button 
                     onClick={() => setIsSizeGuideOpen(true)}
-                    className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-black underline underline-offset-4 transition-colors"
+                    className="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-black underline underline-offset-4 transition-colors"
                   >
                     Size Guide
                   </button>
                 </div>
                 {showSizeError && (
-                  <span className="text-sm font-bold text-red-500 uppercase tracking-widest">Please select a size</span>
+                  <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Please select a size</span>
                 )}
               </div>
               <div className="grid grid-cols-5 gap-2">
@@ -173,7 +175,7 @@ export const ProductDetails: React.FC = () => {
                       setSelectedSize(size);
                       setShowSizeError(false);
                     }}
-                    className={`py-3 text-sm font-mono uppercase transition-colors border ${
+                    className={`py-2 text-[10px] font-mono uppercase transition-colors border ${
                       selectedSize === size
                         ? 'bg-black text-white border-black'
                         : 'bg-white text-black border-gray-200 hover:border-black'
@@ -185,11 +187,11 @@ export const ProductDetails: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-auto flex flex-col gap-4">
+            <div className="mt-auto flex gap-2 mb-6">
               <button 
                 onClick={handleAddToBasket}
                 disabled={added}
-                className={`w-full py-5 text-sm font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
+                className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                   added 
                     ? 'bg-green-600 text-white border border-green-600' 
                     : 'bg-black text-white hover:bg-gray-900 border border-black'
@@ -197,7 +199,7 @@ export const ProductDetails: React.FC = () => {
               >
                 {added ? (
                   <>
-                    <Check className="w-5 h-5" /> Added to Basket
+                    <Check className="w-3 h-3" /> Added
                   </>
                 ) : (
                   'Add to Basket'
@@ -206,18 +208,18 @@ export const ProductDetails: React.FC = () => {
               
               <button 
                 onClick={handleCheckout}
-                className="w-full py-5 text-sm font-bold uppercase tracking-widest text-center border border-black text-black hover:bg-black hover:text-white transition-colors"
+                className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-center border border-black text-black hover:bg-black hover:text-white transition-colors"
               >
-                Go to Checkout
+                Checkout
               </button>
             </div>
             
-            <div className="mt-12 space-y-4 text-xs font-mono uppercase tracking-widest text-gray-500">
-              <p className="flex justify-between border-b border-gray-200 pb-2">
+            <div className="space-y-2 text-[10px] font-mono uppercase tracking-widest text-gray-500">
+              <p className="flex justify-between border-b border-gray-200 pb-1.5">
                 <span>Shipping</span>
                 <span>{product.delivery || 'Worldwide'}</span>
               </p>
-              <p className="flex justify-between border-b border-gray-200 pb-2">
+              <p className="flex justify-between border-b border-gray-200 pb-1.5">
                 <span>Returns</span>
                 <span>14 Days</span>
               </p>
