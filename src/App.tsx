@@ -17,7 +17,14 @@ const AnimatedRoutes = () => {
   const location = useLocation();
   
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence 
+      mode="wait" 
+      onExitComplete={() => {
+        if (!window.location.hash) {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' } as any);
+        }
+      }}
+    >
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Home /></PageTransition>} />
         <Route path="/product/:id" element={<PageTransition><ProductDetails /></PageTransition>} />
