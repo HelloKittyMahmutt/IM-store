@@ -6,7 +6,7 @@ export const Terms: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-black pt-32 pb-32">
+    <div className="min-h-screen bg-white text-black pt-40 pb-32">
       <div className="max-w-3xl mx-auto px-6">
         <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-16">
           Terms of Service
