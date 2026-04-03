@@ -43,6 +43,7 @@ function App() {
     <BasketProvider>
       <Router>
         <div className="flex flex-col min-h-screen bg-[#050505] text-[#f5f5f5] font-sans selection:bg-white selection:text-black">
+          <AnnouncementBar />
           <Navbar />
           <NewsletterPopup />
           <main className="flex-grow">
