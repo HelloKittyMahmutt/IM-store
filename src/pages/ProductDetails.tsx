@@ -34,7 +34,7 @@ export const ProductDetails: React.FC = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen pt-32 px-6 flex flex-col items-center justify-center bg-white text-black">
+      <div className="min-h-screen pt-40 px-6 flex flex-col items-center justify-center bg-white text-black">
         <h1 className="text-4xl font-black uppercase mb-4">Product Not Found</h1>
         <Link to="/#collection" className="text-sm font-bold uppercase tracking-widest border-b border-black pb-1">
           Return to Collection
@@ -65,7 +65,7 @@ export const ProductDetails: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black pt-24 pb-32">
+    <div className="min-h-screen bg-white text-black pt-40 pb-32">
       <div className="max-w-7xl mx-auto px-6">
         
         <div className="mb-12 pt-8">
