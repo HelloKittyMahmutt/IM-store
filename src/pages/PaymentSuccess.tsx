@@ -30,7 +30,7 @@ export const PaymentSuccess: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black pt-32 pb-32 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-white text-black pt-40 pb-32 flex flex-col items-center justify-center">
       <div className="max-w-md w-full px-6 text-center">
         <CheckCircle2 className="w-16 h-16 mx-auto mb-8" />
         <h1 className="text-4xl font-black uppercase tracking-tighter mb-4">
