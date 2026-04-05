@@ -1,3 +1,4 @@
+import { useCurrency } from '../context/CurrencyContext';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { products } from '../data/products';
@@ -9,6 +10,7 @@ export const ProductDetails: React.FC = () => {
   const navigate = useNavigate();
   const product = products.find(p => p.id === id);
   const { addToBasket } = useBasket();
+  const { formatPrice } = useCurrency();
   
   const [activeImage, setActiveImage] = useState(0);
   const [added, setAdded] = useState(false);
@@ -113,7 +115,7 @@ export const ProductDetails: React.FC = () => {
             <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-1">
               {product.name}
             </h1>
-            <p className="text-lg font-mono mb-3">€{product.price}</p>
+            <p className="text-lg font-mono mb-3">{formatPrice(product.price)}</p>
             
             <div className="w-full h-px bg-gray-200 mb-3"></div>
             
