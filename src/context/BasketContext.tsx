@@ -15,11 +15,14 @@ interface BasketContextType {
   clearBasket: () => void;
   totalItems: number;
   totalPrice: number;
+  isCartOpen: boolean;
+  setIsCartOpen: (isOpen: boolean) => void;
 }
 
 const BasketContext = createContext<BasketContextType | undefined>(undefined);
 
 export const BasketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [items, setItems] = useState<BasketItem[]>(() => {
     const saved = localStorage.getItem('im_basket');
     return saved ? JSON.parse(saved) : [];
@@ -41,6 +44,7 @@ export const BasketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
       return [...prev, { product, quantity, size }];
     });
+    setIsCartOpen(true);
   };
 
   const removeFromBasket = (productId: string, size: string) => {
@@ -67,7 +71,7 @@ export const BasketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const totalPrice = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
 
   return (
-    <BasketContext.Provider value={{ items, addToBasket, removeFromBasket, updateQuantity, clearBasket, totalItems, totalPrice }}>
+    <BasketContext.Provider value={{ items, addToBasket, removeFromBasket, updateQuantity, clearBasket, totalItems, totalPrice, isCartOpen, setIsCartOpen }}>
       {children}
     </BasketContext.Provider>
   );
