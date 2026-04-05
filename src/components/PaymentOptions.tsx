@@ -1,3 +1,4 @@
+import { useCurrency } from '../context/CurrencyContext';
 import React, { useState, useEffect } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 
@@ -11,6 +12,9 @@ interface PaymentOptionsProps {
 export const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, items, onSuccess, onCancel }) => {
   const [activeMethod, setActiveMethod] = useState<'card' | 'paypal'>('card');
   const [isProcessing, setIsProcessing] = useState(false);
+  const { currency, formatPrice } = useCurrency();
+  const rateStr = formatPrice(1).replace(/[^0-9.]/g, '');
+  const rate = parseFloat(rateStr) || 1;
 
   const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
   const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID;
@@ -53,7 +57,8 @@ export const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, items, o
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           items, 
-          currency: 'eur',
+          currency: currency.toLowerCase(),
+          rate: rate,
           origin: window.location.origin
         }),
       });
@@ -130,7 +135,7 @@ export const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, items, o
                 <p>PayPal is not configured. Please add VITE_PAYPAL_CLIENT_ID to your environment.</p>
               </div>
             ) : (
-              <PayPalScriptProvider options={{ clientId: paypalClientId, currency: 'EUR' }}>
+              <PayPalScriptProvider options={{ clientId: paypalClientId, currency: currency }}>
                 <PayPalButtons
                   style={{ layout: 'vertical', color: 'black', shape: 'rect' }}
                   createOrder={(data, actions) => {
@@ -139,8 +144,8 @@ export const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, items, o
                       purchase_units: [
                         {
                           amount: {
-                            currency_code: 'EUR',
-                            value: amount.toString(),
+                            currency_code: currency,
+                            value: (amount * rate).toFixed(2),
                           },
                         },
                       ],
