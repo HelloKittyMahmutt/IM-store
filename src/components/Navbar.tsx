@@ -53,7 +53,8 @@ const CurrencyDropdown = ({ isMobile = false }: { isMobile?: boolean }) => {
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { totalItems } = useBasket();
+  const { totalItems, setIsCartOpen } = useBasket();
+  const { currency, setCurrency } = useCurrency();
   const location = useLocation();
   const isHome = location.pathname === '/';
 
@@ -110,14 +111,17 @@ export const Navbar: React.FC = () => {
             <div className="hidden sm:block">
               <CurrencyDropdown />
             </div>
-            <Link to="/checkout" className="text-white hover:text-[#888888] transition-colors relative p-2">
+            <button 
+              onClick={() => setIsCartOpen(true)} 
+              className="text-white hover:text-[#888888] transition-colors relative p-2 cursor-pointer"
+            >
               <ShoppingBag className="w-6 h-6" />
               {totalItems > 0 && (
                 <span className="absolute top-0 right-0 bg-white text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                   {totalItems}
                 </span>
               )}
-            </Link>
+            </button>
             <Link to="/#collection" className="hidden lg:block text-xs font-bold border border-white px-8 py-3 uppercase tracking-[0.2em] text-white hover:bg-white hover:text-black transition-all cursor-pointer">
               Shop
             </Link>
