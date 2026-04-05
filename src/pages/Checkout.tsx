@@ -1,3 +1,4 @@
+import { useCurrency } from '../context/CurrencyContext';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useBasket } from '../context/BasketContext';
@@ -6,6 +7,7 @@ import { PaymentOptions } from '../components/PaymentOptions';
 
 export const Checkout: React.FC = () => {
   const { items, updateQuantity, removeFromBasket, totalPrice } = useBasket();
+  const { formatPrice } = useCurrency();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [paymentCancelled, setPaymentCancelled] = useState(false);
   const navigate = useNavigate();
@@ -85,7 +87,7 @@ export const Checkout: React.FC = () => {
                           {item.product.name}
                         </h3>
                       </Link>
-                      <p className="font-mono text-lg">€{item.product.price * item.quantity}</p>
+                      <p className="font-mono text-lg">{formatPrice(item.product.price * item.quantity)}</p>
                     </div>
                     
                     <p className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-2">
@@ -135,7 +137,7 @@ export const Checkout: React.FC = () => {
               <div className="space-y-4 text-sm font-mono uppercase tracking-widest text-gray-600 mb-8 border-b border-gray-200 pb-8">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="text-black">€{totalPrice}</span>
+                  <span className="text-black">{formatPrice(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
@@ -145,7 +147,7 @@ export const Checkout: React.FC = () => {
               
               <div className="flex justify-between items-end mb-8">
                 <span className="text-sm font-bold uppercase tracking-widest">Total</span>
-                <span className="text-3xl font-mono font-bold">€{totalPrice}</span>
+                <span className="text-3xl font-mono font-bold">{formatPrice(totalPrice)}</span>
               </div>
               
               {!isCheckingOut ? (
