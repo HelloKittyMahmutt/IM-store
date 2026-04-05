@@ -1,9 +1,11 @@
+import { useCurrency } from '../context/CurrencyContext';
 import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { products } from '../data/products';
 
 export const Home: React.FC = () => {
   const location = useLocation();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     if (location.hash) {
@@ -177,7 +179,7 @@ export const Home: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-start border-t border-black pt-4">
                   <h3 className="text-lg font-black uppercase tracking-tight text-black">{product.name}</h3>
-                  <span className="text-sm font-mono text-black">€{product.price}</span>
+                  <span className="text-sm font-mono text-black">{formatPrice(product.price)}</span>
                 </div>
               </Link>
             ))}
