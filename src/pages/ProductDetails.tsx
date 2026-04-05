@@ -65,10 +65,10 @@ export const ProductDetails: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black pt-32 pb-8">
+    <div className="min-h-screen bg-white text-black pt-36 pb-8">
       <div className="max-w-7xl mx-auto px-6">
         
-        <div className="mb-4">
+        <div className="mb-2">
           <button 
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest hover:text-[#888888] transition-colors"
@@ -80,8 +80,8 @@ export const ProductDetails: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           
           {/* Image Gallery */}
-          <div className="flex flex-col gap-4 lg:sticky lg:top-32">
-            <div className="relative w-full h-[55vh] lg:h-[70vh]">
+          <div className="flex flex-col gap-4 lg:sticky lg:top-36">
+            <div className="relative w-full h-[50vh] lg:h-[65vh]">
               <img 
                 src={product.images[activeImage]} 
                 alt={product.name} 
@@ -113,23 +113,23 @@ export const ProductDetails: React.FC = () => {
             <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-1">
               {product.name}
             </h1>
-            <p className="text-lg font-mono mb-4">€{product.price}</p>
+            <p className="text-lg font-mono mb-3">€{product.price}</p>
             
-            <div className="w-full h-px bg-gray-200 mb-4"></div>
+            <div className="w-full h-px bg-gray-200 mb-3"></div>
             
-            <p className="text-sm text-gray-600 leading-relaxed mb-4">
+            <p className="text-sm text-gray-600 leading-relaxed mb-3">
               {product.description}
             </p>
 
             {product.quote && (
-              <div className="mb-4 py-2 border-l-2 border-black pl-4">
+              <div className="mb-3 py-2 border-l-2 border-black pl-4">
                 <p className="text-sm font-medium italic tracking-tight">
                   "{product.quote}"
                 </p>
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-2 gap-6 mb-4">
               {product.details && (
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-widest mb-3">Details</h4>
@@ -152,7 +152,7 @@ export const ProductDetails: React.FC = () => {
               )}
             </div>
 
-            <div className="mb-6">
+            <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-4">
                   <span className="text-[10px] font-bold uppercase tracking-widest">Select Size</span>
@@ -187,7 +187,7 @@ export const ProductDetails: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-auto flex gap-2 mb-6">
+            <div className="mt-auto flex gap-2 mb-4">
               <button 
                 onClick={handleAddToBasket}
                 disabled={added}
