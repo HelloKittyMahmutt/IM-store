@@ -1,4 +1,3 @@
-import { AnnouncementBar } from './components/AnnouncementBar';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
@@ -11,8 +10,11 @@ import { PaymentSuccess } from './pages/PaymentSuccess';
 import { Returns } from './pages/Returns';
 import { Terms } from './pages/Terms';
 import { BasketProvider } from './context/BasketContext';
+import { CurrencyProvider } from './context/CurrencyContext';
 import { NewsletterPopup } from './components/NewsletterPopup';
 import { PageTransition } from './components/PageTransition';
+import { AnnouncementBar } from './components/AnnouncementBar';
+import { CartDrawer } from './components/CartDrawer';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -40,19 +42,22 @@ const AnimatedRoutes = () => {
 
 function App() {
   return (
-    <BasketProvider>
-      <Router>
-        <div className="flex flex-col min-h-screen bg-[#050505] text-[#f5f5f5] font-sans selection:bg-white selection:text-black">
-          <AnnouncementBar />
-          <Navbar />
-          <NewsletterPopup />
-          <main className="flex-grow">
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-        </div>
-      </Router>
-    </BasketProvider>
+    <CurrencyProvider>
+      <BasketProvider>
+        <Router>
+          <div className="flex flex-col min-h-screen bg-[#050505] text-[#f5f5f5] font-sans selection:bg-white selection:text-black">
+            <AnnouncementBar />
+            <Navbar />
+            <CartDrawer />
+            <NewsletterPopup />
+            <main className="flex-grow">
+              <AnimatedRoutes />
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </BasketProvider>
+    </CurrencyProvider>
   );
 }
 
