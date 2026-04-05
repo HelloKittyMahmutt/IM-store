@@ -29,7 +29,7 @@ function getStripe(): Stripe {
 // API Routes
 app.post('/api/create-checkout-session', async (req, res) => {
   try {
-    const { items, currency = 'eur', origin: clientOrigin } = req.body;
+    const { items, currency = 'eur', rate = 1, origin: clientOrigin } = req.body;
     
     if (!process.env.STRIPE_SECRET_KEY) {
       return res.status(500).json({ error: 'Stripe is not configured on the server. Missing STRIPE_SECRET_KEY.' });
@@ -56,7 +56,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
             description: `Size: ${item.size}`,
             images: absoluteImageUrl ? [absoluteImageUrl] : [],
           },
-          unit_amount: Math.round(item.product.price * 100),
+          unit_amount: Math.round(item.product.price * rate * 100),
         },
         quantity: item.quantity,
       };
