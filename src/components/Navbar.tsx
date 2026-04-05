@@ -1,7 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Menu, X } from 'lucide-react';
+import { ShoppingBag, Menu, X, ChevronDown } from 'lucide-react';
 import { useBasket } from '../context/BasketContext';
+import { useCurrency, CURRENCIES, Currency } from '../context/CurrencyContext';
+
+const CurrencyDropdown = ({ isMobile = false }: { isMobile?: boolean }) => {
+  const { currency, setCurrency } = useCurrency();
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (isOpen && !(e.target as Element).closest('.currency-dropdown')) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  return (
+    <div className={`relative currency-dropdown ${isMobile ? 'flex justify-center' : ''}`}>
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center gap-1 text-white hover:text-[#888888] transition-colors font-bold uppercase tracking-widest ${isMobile ? 'text-sm' : 'text-xs'}`}
+      >
+        {currency}
+        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div className={`absolute z-50 bg-[#0a0a0a] border border-white/10 shadow-2xl overflow-hidden ${isMobile ? 'bottom-full mb-4 left-1/2 -translate-x-1/2' : 'top-full mt-6 right-0'} w-24 rounded-sm`}>
+          <div className="max-h-64 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {CURRENCIES.map((c) => (
+              <button
+                key={c}
+                onClick={() => {
+                  setCurrency(c);
+                  setIsOpen(false);
+                }}
+                className={`w-full text-center px-4 py-3 text-xs font-bold tracking-widest hover:bg-white/10 transition-colors ${currency === c ? 'text-white bg-white/5' : 'text-[#888888]'}`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -60,6 +107,9 @@ export const Navbar: React.FC = () => {
 
           {/* Shop Button / Basket */}
           <div className="flex items-center relative z-[20] gap-4">
+            <div className="hidden sm:block">
+              <CurrencyDropdown />
+            </div>
             <Link to="/checkout" className="text-white hover:text-[#888888] transition-colors relative p-2">
               <ShoppingBag className="w-6 h-6" />
               {totalItems > 0 && (
@@ -85,6 +135,10 @@ export const Navbar: React.FC = () => {
           
           <div className="w-16 h-px bg-white/20 mx-auto my-4"></div>
           
+          <div className="mb-4">
+            <CurrencyDropdown isMobile={true} />
+          </div>
+
           <Link to="/#collection" onClick={closeMenu} className="text-sm font-bold border border-white px-12 py-4 uppercase tracking-[0.25em] text-white hover:bg-white hover:text-black transition-all cursor-pointer">
             Shop Collection
           </Link>
