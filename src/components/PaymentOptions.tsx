@@ -1,6 +1,6 @@
-import { useCurrency } from '../context/CurrencyContext';
 import React, { useState, useEffect } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
+import { useCurrency } from '../context/CurrencyContext';
 
 interface PaymentOptionsProps {
   amount: number;
@@ -13,6 +13,8 @@ export const PaymentOptions: React.FC<PaymentOptionsProps> = ({ amount, items, o
   const [activeMethod, setActiveMethod] = useState<'card' | 'paypal'>('card');
   const [isProcessing, setIsProcessing] = useState(false);
   const { currency, formatPrice } = useCurrency();
+
+  // Get the current rate by extracting it from the formatted price of 1 EUR
   const rateStr = formatPrice(1).replace(/[^0-9.]/g, '');
   const rate = parseFloat(rateStr) || 1;
 

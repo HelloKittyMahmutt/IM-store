@@ -1,8 +1,9 @@
-import { useCurrency } from '../context/CurrencyContext';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { products } from '../data/products';
 import { useBasket } from '../context/BasketContext';
+import { useCurrency } from '../context/CurrencyContext';
+import { useDrop } from '../context/DropContext';
 import { ArrowLeft, Check, X } from 'lucide-react';
 
 export const ProductDetails: React.FC = () => {
@@ -11,6 +12,7 @@ export const ProductDetails: React.FC = () => {
   const product = products.find(p => p.id === id);
   const { addToBasket } = useBasket();
   const { formatPrice } = useCurrency();
+  const { isUnlocked } = useDrop();
   
   const [activeImage, setActiveImage] = useState(0);
   const [added, setAdded] = useState(false);
@@ -19,8 +21,16 @@ export const ProductDetails: React.FC = () => {
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   useEffect(() => {
+    if (!isUnlocked) {
+      navigate('/#collection', { replace: true });
+    }
+  }, [isUnlocked, navigate]);
+
+  useEffect(() => {
     // Scroll handled by PageTransition
   }, [id]);
+
+  if (!isUnlocked) return null;
 
   // Prevent scrolling when modal is open
   useEffect(() => {

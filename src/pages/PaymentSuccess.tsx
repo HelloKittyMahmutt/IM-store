@@ -8,8 +8,6 @@ export const PaymentSuccess: React.FC = () => {
   const clearedRef = useRef(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    
     if (window.opener) {
       window.opener.postMessage({ type: 'STRIPE_SUCCESS' }, '*');
       setTimeout(() => window.close(), 1000);

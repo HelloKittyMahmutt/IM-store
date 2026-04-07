@@ -107,10 +107,25 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Shop Button / Basket */}
-          <div className="flex items-center relative z-[20] gap-4">
-            <div className="hidden sm:block">
+          <div className="flex items-center relative z-[20] gap-3 md:gap-4">
+            <div className="block">
               <CurrencyDropdown />
             </div>
+            
+            {/* Dev Lock Button - Only visible in development */}
+            {process.env.NODE_ENV === 'development' && (
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('im_unlocked');
+                  window.location.reload();
+                }}
+                className="hidden lg:block text-[10px] font-mono border border-red-500/50 text-red-500 px-3 py-1 uppercase tracking-widest hover:bg-red-500/10 transition-colors"
+                title="Lock Vault (Dev Only)"
+              >
+                Lock
+              </button>
+            )}
+
             <button 
               onClick={() => setIsCartOpen(true)} 
               className="text-white hover:text-[#888888] transition-colors relative p-2 cursor-pointer"

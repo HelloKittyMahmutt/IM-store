@@ -11,6 +11,7 @@ import { Returns } from './pages/Returns';
 import { Terms } from './pages/Terms';
 import { BasketProvider } from './context/BasketContext';
 import { CurrencyProvider } from './context/CurrencyContext';
+import { DropProvider } from './context/DropContext';
 import { NewsletterPopup } from './components/NewsletterPopup';
 import { PageTransition } from './components/PageTransition';
 import { AnnouncementBar } from './components/AnnouncementBar';
@@ -44,18 +45,20 @@ function App() {
   return (
     <CurrencyProvider>
       <BasketProvider>
-        <Router>
-          <div className="flex flex-col min-h-screen bg-[#050505] text-[#f5f5f5] font-sans selection:bg-white selection:text-black">
-            <AnnouncementBar />
-            <Navbar />
-            <CartDrawer />
-            <NewsletterPopup />
-            <main className="flex-grow">
-              <AnimatedRoutes />
-            </main>
-            <Footer />
-          </div>
-        </Router>
+        <DropProvider>
+          <Router>
+            <div className="flex flex-col min-h-screen bg-[#050505] text-[#f5f5f5] font-sans selection:bg-white selection:text-black">
+              <AnnouncementBar />
+              <Navbar />
+              <CartDrawer />
+              <NewsletterPopup />
+              <main className="flex-grow">
+                <AnimatedRoutes />
+              </main>
+              <Footer />
+            </div>
+          </Router>
+        </DropProvider>
       </BasketProvider>
     </CurrencyProvider>
   );

@@ -1,20 +1,26 @@
-import { useCurrency } from '../context/CurrencyContext';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useBasket } from '../context/BasketContext';
+import { useCurrency } from '../context/CurrencyContext';
+import { useDrop } from '../context/DropContext';
 import { Trash2, Plus, Minus, ArrowLeft } from 'lucide-react';
 import { PaymentOptions } from '../components/PaymentOptions';
 
 export const Checkout: React.FC = () => {
   const { items, updateQuantity, removeFromBasket, totalPrice } = useBasket();
   const { formatPrice } = useCurrency();
+  const { isUnlocked } = useDrop();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [paymentCancelled, setPaymentCancelled] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    
+    if (!isUnlocked) {
+      navigate('/#collection', { replace: true });
+    }
+  }, [isUnlocked, navigate]);
+
+  useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     if (query.get('canceled') === 'true') {
       if (window.opener) {
@@ -36,6 +42,8 @@ export const Checkout: React.FC = () => {
   const handlePaymentCancel = () => {
     setPaymentCancelled(true);
   };
+
+  if (!isUnlocked) return null;
 
   return (
     <div className="min-h-screen bg-white text-black pt-40 pb-32">

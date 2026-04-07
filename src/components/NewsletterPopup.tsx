@@ -8,16 +8,16 @@ export const NewsletterPopup: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Check if user has already seen the popup
-    const hasSeenPopup = localStorage.getItem('hasSeenNewsletterPopup');
+    // Force show popup for testing
+    const hasSeenPopup = false; // localStorage.getItem('hasSeenNewsletterPopup');
     
     if (!hasSeenPopup) {
-      // Show popup after 3 seconds
+      // Show popup after 1 second for testing
       const timer = setTimeout(() => {
         setIsOpen(true);
         // Small delay for the fade-in effect to trigger after display:block
         setTimeout(() => setIsVisible(true), 50);
-      }, 3000);
+      }, 1000);
       
       return () => clearTimeout(timer);
     }
@@ -30,33 +30,27 @@ export const NewsletterPopup: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!email) return;
+    e.preventDefault();
+    if (!email) return;
 
-  try {
-    const response = await fetch('/api/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to subscribe');
+    try {
+      await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+    } catch (error) {
+      console.error('Failed to subscribe:', error);
     }
-
+    
     setIsSubmitted(true);
     localStorage.setItem('hasSeenNewsletterPopup', 'true');
-
+    
+    // Close automatically after 2.5 seconds
     setTimeout(() => {
       handleClose();
     }, 2500);
-  } catch (error) {
-    console.error('Subscribe error:', error);
-    alert('Something went wrong. Please try again.');
-  }
-};
+  };
 
   if (!isOpen) return null;
 
@@ -76,14 +70,14 @@ export const NewsletterPopup: React.FC = () => {
         </button>
 
         <div className="text-center">
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-black mb-4">
+          <h2 className="text-4xl md:text-5xl font-serif italic text-black mb-4">
             The Drop Is Coming
           </h2>
           
           {!isSubmitted ? (
             <>
-              <p className="text-sm md:text-base text-gray-600 mb-8 leading-relaxed">
-                Sign up to our newsletter to be the first to know when we go live. Exclusive access for early members.
+              <p className="text-xs md:text-sm font-mono text-gray-500 mb-8 leading-relaxed uppercase tracking-widest">
+                Only access for the key that unlocks the drop.
               </p>
               
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -93,28 +87,27 @@ export const NewsletterPopup: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="ENTER YOUR EMAIL"
                   required
-                  className="w-full px-4 py-4 bg-gray-100 border border-transparent focus:border-black focus:bg-white outline-none transition-all text-sm tracking-widest uppercase placeholder:text-gray-400 text-black text-center"
+                  className="w-full px-4 py-4 bg-transparent border-b border-gray-300 focus:border-black outline-none transition-all text-sm font-mono tracking-widest uppercase placeholder:text-gray-400 text-black text-center"
                 />
                 <button
                   type="submit"
-                  className="w-full bg-black text-white py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors cursor-pointer"
+                  className="w-full bg-black text-white py-4 mt-4 text-xs font-mono font-bold uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors cursor-pointer"
                 >
                   Notify Me
                 </button>
               </form>
-              <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-6">
+              <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mt-8">
                 By signing up, you agree to our Terms & Privacy Policy.
               </p>
             </>
           ) : (
-            <div className="py-8">
-              <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-black uppercase tracking-tight text-black mb-2">You're on the list</h3>
-              <p className="text-sm text-gray-600">Keep an eye on your inbox.</p>
+            <div className="py-12">
+              <p className="text-sm font-mono text-black uppercase tracking-widest">
+                You are on the list.
+              </p>
+              <p className="text-xs font-mono text-gray-500 mt-4 uppercase tracking-widest">
+                Keep an eye on your inbox.
+              </p>
             </div>
           )}
         </div>

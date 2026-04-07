@@ -19,7 +19,7 @@
 }
 
 html {
-  
+  /* Removed scroll-behavior: smooth to prevent transition scroll bugs */
 }
 
 body {
@@ -46,6 +46,14 @@ body {
 }
 
 /* Animation Utilities */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 75s linear infinite;
+}
+
 .fade-in-section {
   opacity: 0;
   transform: translateY(30px);
@@ -67,11 +75,3 @@ body {
 .delay-800 { transition-delay: 800ms; }
 .delay-900 { transition-delay: 900ms; }
 .delay-1000 { transition-delay: 1000ms; }
-/* Animation Utilities */
-@keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
-}
-.animate-marquee {
-  animation: marquee 75s linear infinite;
-}

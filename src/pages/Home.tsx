@@ -1,11 +1,78 @@
-import { useCurrency } from '../context/CurrencyContext';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { products } from '../data/products';
+import { useCurrency } from '../context/CurrencyContext';
+import { useDrop } from '../context/DropContext';
 
 export const Home: React.FC = () => {
   const location = useLocation();
   const { formatPrice } = useCurrency();
+  const { isUnlocked, unlock } = useDrop();
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  const [email, setEmail] = useState('');
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  useEffect(() => {
+    // Set target date to October 31st, 2026
+    const targetDate = new Date('2026-10-31T00:00:00Z').getTime();
+    
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+      
+      if (distance < 0) {
+        clearInterval(interval);
+        return;
+      }
+      
+      setTimeLeft({
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000)
+      });
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleUnlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!unlock(password)) {
+      setError(true);
+      setTimeout(() => setError(false), 2000);
+    }
+  };
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    
+    setEmailStatus('loading');
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (response.ok) {
+        setEmailStatus('success');
+        setEmail('');
+      } else {
+        setEmailStatus('error');
+      }
+    } catch (err) {
+      setEmailStatus('error');
+    }
+    
+    setTimeout(() => {
+      if (emailStatus !== 'success') setEmailStatus('idle');
+    }, 3000);
+  };
 
   useEffect(() => {
     if (location.hash) {
@@ -16,8 +83,6 @@ export const Home: React.FC = () => {
           element.scrollIntoView({ behavior: 'smooth' });
         }, 100);
       }
-    } else {
-      window.scrollTo(0, 0);
     }
   }, [location]);
 
@@ -141,55 +206,143 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Products Section */}
-      <section id="collection" className="py-32 bg-white text-black scroll-mt-24">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="collection" className={`py-32 scroll-mt-24 transition-colors duration-1000 overflow-hidden relative ${!isUnlocked ? 'bg-[#050505] text-white' : 'bg-white text-black'}`}>
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           
-          <div className="flex justify-between items-end mb-24">
-            <div>
-              <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-black">
-                Essential<br/>Gear
+          {!isUnlocked ? (
+            <div className="max-w-4xl mx-auto text-center py-12 md:py-20 relative">
+              <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-white mb-4 relative z-10">
+                PROJECT: I AM
               </h2>
-            </div>
-            <div className="hidden md:block">
-              <p className="text-right max-w-xs text-sm font-bold tracking-wide uppercase border-l-2 border-black pl-4 text-black">
-                This isn’t something you wear to feel motivated. <br/>
-                It represents who you already are.
+              <p className="text-sm font-mono tracking-[0.5em] text-[#888888] uppercase mb-16 relative z-10">
+                10 . 31 . 26
               </p>
-            </div>
-          </div>
+              
+              {/* Countdown */}
+              <div className="flex justify-center gap-4 md:gap-8 mb-24 font-mono relative z-10">
+                <div className="flex flex-col items-center">
+                  <span className="text-4xl md:text-7xl font-black text-white">{timeLeft.days}</span>
+                  <span className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#555555] mt-4">Days</span>
+                </div>
+                <span className="text-4xl md:text-7xl font-black text-[#333333]">:</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-4xl md:text-7xl font-black text-white">{timeLeft.hours.toString().padStart(2, '0')}</span>
+                  <span className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#555555] mt-4">Hours</span>
+                </div>
+                <span className="text-4xl md:text-7xl font-black text-[#333333]">:</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-4xl md:text-7xl font-black text-white">{timeLeft.minutes.toString().padStart(2, '0')}</span>
+                  <span className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#555555] mt-4">Mins</span>
+                </div>
+                <span className="text-4xl md:text-7xl font-black text-[#333333]">:</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-4xl md:text-7xl font-black text-white">{timeLeft.seconds.toString().padStart(2, '0')}</span>
+                  <span className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#555555] mt-4">Secs</span>
+                </div>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 max-w-7xl mx-auto">
-            {products.map((product) => (
-              <Link to={`/product/${product.id}`} key={product.id} className="group cursor-pointer block">
-                <div className="relative overflow-hidden aspect-[3/4] mb-6">
-                  {/* Front Image */}
-                  <img src={product.images[0]} alt={product.name} className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ease-out grayscale ${product.images.length > 1 ? 'group-hover:opacity-0' : ''}`} />
-                  {/* Back Image (On Hover) */}
-                  {product.images.length > 1 && (
-                    <img src={product.images[1]} alt={`${product.name} back`} className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ease-out opacity-0 group-hover:opacity-100 grayscale`} />
+              <div className="max-w-md mx-auto relative z-10">
+                {/* Password Unlock */}
+                <div className="mb-16">
+                  <p className="text-xs font-bold uppercase tracking-widest mb-6 text-[#888888]">Have the key? Unlock your potential.</p>
+                  <form className="flex flex-col gap-4" onSubmit={handleUnlock}>
+                    <input 
+                      type="password" 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="INSERT KEY" 
+                      className={`w-full bg-transparent border-b px-4 py-4 text-sm font-mono text-white focus:outline-none transition-colors text-center placeholder:text-[#555555] ${error ? 'border-red-500 text-red-500' : 'border-white/30 focus:border-white'}`} 
+                    />
+                    <button type="submit" className="w-full bg-transparent border border-white text-white px-8 py-4 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
+                      Unlock
+                    </button>
+                  </form>
+                  {error && <p className="text-xs text-red-500 font-mono tracking-widest mt-4">Access Denied</p>}
+                </div>
+
+                {/* Email Signup - Moved directly below unlock */}
+                <div className="pt-12 border-t border-white/10">
+                  {emailStatus === 'success' ? (
+                    <div className="border border-white/20 px-4 py-3 bg-white/5 text-white text-xs font-mono tracking-widest uppercase text-center">
+                      You are on the list.
+                    </div>
+                  ) : (
+                    <form className="flex flex-col gap-4" onSubmit={handleEmailSubmit}>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#888888]">Join for the key to success</p>
+                      <div className="flex">
+                        <input 
+                          type="email" 
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="EMAIL ADDRESS" 
+                          className="w-full bg-transparent border-b border-white/30 px-2 py-2 text-xs font-mono text-white focus:outline-none focus:border-white transition-colors placeholder:text-[#555555]" 
+                          required 
+                          disabled={emailStatus === 'loading'}
+                        />
+                        <button 
+                          type="submit" 
+                          disabled={emailStatus === 'loading'}
+                          className="bg-white text-black px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors disabled:opacity-50 whitespace-nowrap"
+                        >
+                          {emailStatus === 'loading' ? '...' : 'Join'}
+                        </button>
+                      </div>
+                      {emailStatus === 'error' && <p className="text-[10px] text-red-500 font-mono mt-1">Failed. Try again.</p>}
+                    </form>
                   )}
-                  
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
-                  <div className="absolute bottom-0 left-0 w-full p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-white/90 backdrop-blur-sm z-10">
-                    <span className="text-xs font-bold uppercase tracking-widest flex items-center justify-between text-black">
-                      View Details 
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </span>
-                  </div>
                 </div>
-                <div className="flex justify-between items-start border-t border-black pt-4">
-                  <h3 className="text-lg font-black uppercase tracking-tight text-black">{product.name}</h3>
-                  <span className="text-sm font-mono text-black">{formatPrice(product.price)}</span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex justify-between items-end mb-24">
+                <div>
+                  <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-black">
+                    Essential<br/>Gear
+                  </h2>
                 </div>
-              </Link>
-            ))}
-          </div>
+                <div className="hidden md:block">
+                  <p className="text-right max-w-xs text-sm font-bold tracking-wide uppercase border-l-2 border-black pl-4 text-black">
+                    This isn’t something you wear to feel motivated. <br/>
+                    It represents who you already are.
+                  </p>
+                </div>
+              </div>
 
-          <div className="mt-24 text-center border-t border-gray-200 pt-16">
-            <p className="text-sm font-mono uppercase text-gray-500">
-              Limited Drops. No Restocks.
-            </p>
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 max-w-7xl mx-auto">
+                {products.map((product) => (
+                  <Link to={`/product/${product.id}`} key={product.id} className="group cursor-pointer block">
+                    <div className="relative overflow-hidden aspect-[3/4] mb-6">
+                      {/* Front Image */}
+                      <img src={product.images[0]} alt={product.name} className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ease-out grayscale ${product.images.length > 1 ? 'group-hover:opacity-0' : ''}`} />
+                      {/* Back Image (On Hover) */}
+                      {product.images.length > 1 && (
+                        <img src={product.images[1]} alt={`${product.name} back`} className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ease-out opacity-0 group-hover:opacity-100 grayscale`} />
+                      )}
+                      
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
+                      <div className="absolute bottom-0 left-0 w-full p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-white/90 backdrop-blur-sm z-10">
+                        <span className="text-xs font-bold uppercase tracking-widest flex items-center justify-between text-black">
+                          View Details 
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-start border-t border-black pt-4">
+                      <h3 className="text-lg font-black uppercase tracking-tight text-black">{product.name}</h3>
+                      <span className="text-sm font-mono text-black">{formatPrice(product.price)}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="mt-24 text-center border-t border-gray-200 pt-16">
+                <p className="text-sm font-mono uppercase text-gray-500">
+                  Limited Drops. No Restocks.
+                </p>
+              </div>
+            </>
+          )}
 
         </div>
       </section>

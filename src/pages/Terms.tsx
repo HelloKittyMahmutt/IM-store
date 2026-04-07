@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 export const Terms: React.FC = () => {
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Scroll handled by PageTransition
   }, []);
 
   return (
