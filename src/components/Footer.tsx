@@ -1,30 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !firstName) return;
-    
-    try {
-      await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, firstName }),
-      });
-    } catch (error) {
-      console.error('Failed to subscribe:', error);
-    }
-    
-    setIsSubmitted(true);
-    setEmail('');
-    setFirstName('');
-  };
-
   return (
     <footer className="bg-black py-24 px-6 border-t border-white/10 text-center">
       <div className="max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[40vh]">
@@ -42,52 +19,10 @@ export const Footer: React.FC = () => {
           </h2>
         </div>
 
-        <div>
-          <p className="text-sm font-mono tracking-[0.3em] text-white uppercase mb-16">
+        <div className="mb-24">
+          <p className="text-sm font-mono tracking-[0.3em] text-white uppercase">
             IM — A Lifestyle, Not a Label.
           </p>
-        </div>
-
-        <div className="w-full max-w-md mx-auto mb-24">
-          {!isSubmitted ? (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#888888] mb-2 text-center">
-                Notify me when the drop is live
-              </p>
-              <div className="flex flex-col gap-2 border-b border-white/20 focus-within:border-white transition-colors pb-2">
-                <input
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="FIRST NAME"
-                  required
-                  className="w-full bg-transparent py-3 outline-none text-sm tracking-widest uppercase placeholder:text-[#555555] text-white"
-                />
-                <div className="flex">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="ENTER YOUR EMAIL"
-                    required
-                    className="w-full bg-transparent py-3 outline-none text-sm tracking-widest uppercase placeholder:text-[#555555] text-white"
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 text-xs font-bold uppercase tracking-widest text-white hover:text-[#888888] transition-colors cursor-pointer"
-                  >
-                    Join
-                  </button>
-                </div>
-              </div>
-            </form>
-          ) : (
-            <div className="py-4 border border-white/20 text-center">
-              <p className="text-xs font-bold uppercase tracking-widest text-white">
-                You're on the list.
-              </p>
-            </div>
-          )}
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-24 text-xs font-bold uppercase tracking-widest text-[#888888]">
