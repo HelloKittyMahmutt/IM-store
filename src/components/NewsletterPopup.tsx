@@ -3,19 +3,18 @@ import { X } from 'lucide-react';
 
 export const NewsletterPopup: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Force show popup for testing
-    const hasSeenPopup = false; // localStorage.getItem('hasSeenNewsletterPopup');
+    // Only show if they haven't seen it before
+    const hasSeenPopup = localStorage.getItem('hasSeenNewsletterPopup');
     
     if (!hasSeenPopup) {
-      // Show popup after 1 second for testing
       const timer = setTimeout(() => {
         setIsOpen(true);
-        // Small delay for the fade-in effect to trigger after display:block
         setTimeout(() => setIsVisible(true), 50);
       }, 1000);
       
@@ -31,13 +30,13 @@ export const NewsletterPopup: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !firstName) return;
 
     try {
       await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, firstName }),
       });
     } catch (error) {
       console.error('Failed to subscribe:', error);
@@ -81,6 +80,14 @@ export const NewsletterPopup: React.FC = () => {
               </p>
               
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="FIRST NAME"
+                  required
+                  className="w-full px-4 py-4 bg-transparent border-b border-gray-300 focus:border-black outline-none transition-all text-sm font-mono tracking-widest uppercase placeholder:text-gray-400 text-black text-center"
+                />
                 <input
                   type="email"
                   value={email}
