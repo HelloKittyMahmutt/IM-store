@@ -13,6 +13,7 @@ export const Home: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
   const [emailStatus, setEmailStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   useEffect(() => {
@@ -49,19 +50,20 @@ export const Home: React.FC = () => {
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !firstName) return;
     
     setEmailStatus('loading');
     try {
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, firstName }),
       });
       
       if (response.ok) {
         setEmailStatus('success');
         setEmail('');
+        setFirstName('');
       } else {
         setEmailStatus('error');
       }
@@ -269,23 +271,34 @@ export const Home: React.FC = () => {
                   ) : (
                     <form className="flex flex-col gap-4" onSubmit={handleEmailSubmit}>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-[#888888]">Join for the key to success</p>
-                      <div className="flex">
+                      <div className="flex flex-col gap-2">
                         <input 
-                          type="email" 
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="EMAIL ADDRESS" 
+                          type="text" 
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          placeholder="FIRST NAME" 
                           className="w-full bg-transparent border-b border-white/30 px-2 py-2 text-xs font-mono text-white focus:outline-none focus:border-white transition-colors placeholder:text-[#555555]" 
                           required 
                           disabled={emailStatus === 'loading'}
                         />
-                        <button 
-                          type="submit" 
-                          disabled={emailStatus === 'loading'}
-                          className="bg-white text-black px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors disabled:opacity-50 whitespace-nowrap"
-                        >
-                          {emailStatus === 'loading' ? '...' : 'Join'}
-                        </button>
+                        <div className="flex">
+                          <input 
+                            type="email" 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="EMAIL ADDRESS" 
+                            className="w-full bg-transparent border-b border-white/30 px-2 py-2 text-xs font-mono text-white focus:outline-none focus:border-white transition-colors placeholder:text-[#555555]" 
+                            required 
+                            disabled={emailStatus === 'loading'}
+                          />
+                          <button 
+                            type="submit" 
+                            disabled={emailStatus === 'loading'}
+                            className="bg-white text-black px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-gray-200 transition-colors disabled:opacity-50 whitespace-nowrap"
+                          >
+                            {emailStatus === 'loading' ? '...' : 'Join'}
+                          </button>
+                        </div>
                       </div>
                       {emailStatus === 'error' && <p className="text-[10px] text-red-500 font-mono mt-1">Failed. Try again.</p>}
                     </form>
