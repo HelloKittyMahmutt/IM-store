@@ -9,12 +9,14 @@ export const NewsletterPopup: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Only show if they haven't seen it before
-    const hasSeenPopup = localStorage.getItem('hasSeenNewsletterPopup');
+    // Force show popup for testing
+    const hasSeenPopup = false; // localStorage.getItem('hasSeenNewsletterPopup');
     
     if (!hasSeenPopup) {
+      // Show popup after 1 second for testing
       const timer = setTimeout(() => {
         setIsOpen(true);
+        // Small delay for the fade-in effect to trigger after display:block
         setTimeout(() => setIsVisible(true), 50);
       }, 1000);
       
