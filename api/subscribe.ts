@@ -43,6 +43,7 @@ export default async function handler(req: any, res: any) {
       from: 'IM <hello@imwearmovement.com>',
       to: email,
       subject: 'You are on the list.',
+      text: `STATUS: SECURED. THIS INBOX IS NOW YOUR ONLY ACCESS POINT. THERE IS NO OTHER WAY TO GET THE KEY.\n\nYour place is secured. But is your future self secured within you?\n\nYour mind is a liar, ${displayFirstName}. It invents fake limits to keep you safe. Most people surrender to that illusion.\n\nThis brand is an incubator for the obsessed. If you are reading this, you are one of them.\n\nOn 10 . 31 . 26, the countdown hits zero.\n\nThis wait is a filter. The initial hype will die. The casuals will quietly lower their standards and disappear.\n\nYour test is the silence between now and then. Act relentlessly when nobody is watching. Act like your future self, ${displayFirstName}.\n\nWhen the access key finally hits this inbox, you will realize you were never waiting for a clothing drop. You were simply waiting for the world to align with your actions. You are just collecting your trophy to elevate the work you've already done.\n\nMAINTAIN YOUR FUTURE SELF.\n\nIM - EVERYTHING I WANT TO BE.\n\n---\nTo unsubscribe, reply to this email with 'UNSUBSCRIBE'.`,
       html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -104,6 +105,14 @@ export default async function handler(req: any, res: any) {
                       <div style="display: inline-block; background-color: #000000; border: 1px solid #333333; padding: 10px 20px; margin-top: 10px;">
                         <p class="text-darker-grey" style="margin: 0; font-size: 10px; letter-spacing: 0.2em; color: #888888; text-transform: uppercase;">
                           IM - EVERYTHING I WANT TO BE.
+                        </p>
+                      </div>
+
+                      <!-- Anti-Spam Footer -->
+                      <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #222222; text-align: center;">
+                        <p style="color: #555555; font-size: 10px; font-family: monospace; letter-spacing: 0.05em; line-height: 1.5; margin: 0;">
+                          You are receiving this because you requested access at imwearmovement.com.<br/>
+                          If you wish to step away, reply to this email with 'UNSUBSCRIBE'.
                         </p>
                       </div>
                     </td>
