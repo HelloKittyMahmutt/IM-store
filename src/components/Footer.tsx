@@ -3,17 +3,18 @@ import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !firstName) return;
     
     try {
       await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, firstName }),
       });
     } catch (error) {
       console.error('Failed to subscribe:', error);
@@ -21,6 +22,7 @@ export const Footer: React.FC = () => {
     
     setIsSubmitted(true);
     setEmail('');
+    setFirstName('');
   };
 
   return (
@@ -52,21 +54,31 @@ export const Footer: React.FC = () => {
               <p className="text-xs font-bold uppercase tracking-widest text-[#888888] mb-2 text-center">
                 Notify me when the drop is live
               </p>
-              <div className="flex border-b border-white/20 focus-within:border-white transition-colors">
+              <div className="flex flex-col gap-2 border-b border-white/20 focus-within:border-white transition-colors pb-2">
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ENTER YOUR EMAIL"
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="FIRST NAME"
                   required
                   className="w-full bg-transparent py-3 outline-none text-sm tracking-widest uppercase placeholder:text-[#555555] text-white"
                 />
-                <button
-                  type="submit"
-                  className="px-4 text-xs font-bold uppercase tracking-widest text-white hover:text-[#888888] transition-colors cursor-pointer"
-                >
-                  Join
-                </button>
+                <div className="flex">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="ENTER YOUR EMAIL"
+                    required
+                    className="w-full bg-transparent py-3 outline-none text-sm tracking-widest uppercase placeholder:text-[#555555] text-white"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 text-xs font-bold uppercase tracking-widest text-white hover:text-[#888888] transition-colors cursor-pointer"
+                  >
+                    Join
+                  </button>
+                </div>
               </div>
             </form>
           ) : (
