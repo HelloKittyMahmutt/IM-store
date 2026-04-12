@@ -8,6 +8,7 @@ export const Home: React.FC = () => {
   const location = useLocation();
   const { formatPrice } = useCurrency();
   const { isUnlocked, unlock } = useDrop();
+  const [unlockEmail, setUnlockEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -40,9 +41,10 @@ export const Home: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleUnlock = (e: React.FormEvent) => {
+  const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!unlock(password)) {
+    const success = await unlock(unlockEmail, password);
+    if (!success) {
       setError(true);
       setTimeout(() => setError(false), 2000);
     }
@@ -54,6 +56,22 @@ export const Home: React.FC = () => {
     
     setEmailStatus('loading');
     try {
+      // Save to Firebase Vault
+      const { db, handleFirestoreError, OperationType } = await import('../firebase');
+      const { doc, setDoc } = await import('firebase/firestore');
+      
+      try {
+        const normalizedEmail = email.toLowerCase().trim();
+        await setDoc(doc(db, 'waitlist', normalizedEmail), {
+          email: normalizedEmail,
+          firstName,
+          createdAt: new Date().toISOString()
+        });
+      } catch (error) {
+        handleFirestoreError(error, OperationType.CREATE, 'waitlist');
+      }
+
+      // Try to send welcome email via Resend
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -63,7 +81,6 @@ export const Home: React.FC = () => {
       if (response.ok) {
         setEmailStatus('success');
         setEmail('');
-        setFirstName('');
       } else {
         setEmailStatus('error');
       }
@@ -249,17 +266,26 @@ export const Home: React.FC = () => {
                   <p className="text-xs font-bold uppercase tracking-widest mb-6 text-[#888888]">Have the key? Unlock your potential.</p>
                   <form className="flex flex-col gap-4" onSubmit={handleUnlock}>
                     <input 
+                      type="email" 
+                      value={unlockEmail}
+                      onChange={(e) => setUnlockEmail(e.target.value)}
+                      placeholder="WAITLIST EMAIL" 
+                      className={`w-full bg-transparent border-b px-4 py-4 text-sm font-mono text-white focus:outline-none transition-colors text-center placeholder:text-[#555555] ${error ? 'border-red-500 text-red-500' : 'border-white/30 focus:border-white'}`} 
+                      required
+                    />
+                    <input 
                       type="password" 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="INSERT KEY" 
                       className={`w-full bg-transparent border-b px-4 py-4 text-sm font-mono text-white focus:outline-none transition-colors text-center placeholder:text-[#555555] ${error ? 'border-red-500 text-red-500' : 'border-white/30 focus:border-white'}`} 
+                      required
                     />
                     <button type="submit" className="w-full bg-transparent border border-white text-white px-8 py-4 text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
                       Unlock
                     </button>
                   </form>
-                  {error && <p className="text-xs text-red-500 font-mono tracking-widest mt-4">Access Denied</p>}
+                  {error && <p className="text-xs text-red-500 font-mono tracking-widest mt-4">Access Denied. Email not on list or incorrect key.</p>}
                 </div>
 
                 {/* Email Signup - Moved directly below unlock */}

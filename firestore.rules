@@ -1,0 +1,65 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: waitlist
+    // Document ID: auto-generated
+    // Fields:
+    //   - email: string (required, valid email format) - The email address of the subscriber.
+    //   - firstName: string (required) - The first name of the subscriber.
+    //   - createdAt: string (required, ISO 8601 date string) - The timestamp when the user subscribed.
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string &&
+        email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidDateString(dateStr) {
+      return dateStr is string &&
+        dateStr.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidWaitlistEntry(data) {
+      return hasOnlyAllowedFields(['email', 'firstName', 'createdAt']) &&
+             isValidEmail(data.email) &&
+             data.email.size() < 100 &&
+             data.firstName is string &&
+             data.firstName.size() > 0 &&
+             data.firstName.size() < 50 &&
+             isValidDateString(data.createdAt);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /waitlist/{emailId} {
+      // Anyone can join the waitlist (create)
+      allow create: if isValidWaitlistEntry(request.resource.data);
+      
+      // Anyone can check if a specific email exists (get), but nobody can list all emails
+      allow get: if true;
+      
+      // Nobody can update or delete from the client
+      allow update, delete, list: if false;
+    }
+  }
+}

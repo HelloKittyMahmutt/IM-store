@@ -35,6 +35,22 @@ export const NewsletterPopup: React.FC = () => {
     if (!email || !firstName) return;
 
     try {
+      // Save to Firebase Vault
+      const { db, handleFirestoreError, OperationType } = await import('../firebase');
+      const { doc, setDoc } = await import('firebase/firestore');
+      
+      try {
+        const normalizedEmail = email.toLowerCase().trim();
+        await setDoc(doc(db, 'waitlist', normalizedEmail), {
+          email: normalizedEmail,
+          firstName,
+          createdAt: new Date().toISOString()
+        });
+      } catch (error) {
+        handleFirestoreError(error, OperationType.CREATE, 'waitlist');
+      }
+
+      // Try to send welcome email via Resend
       await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
