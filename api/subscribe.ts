@@ -20,14 +20,18 @@ export default async function handler(req: any, res: any) {
     const resend = new Resend(key);
     
     // Add to Resend Audience if configured
-    const audienceId = process.env.VITE_RESEND_AUDIENCE_ID || process.env.RESEND_AUDIENCE_ID;
+    const audienceId = (process.env.VITE_RESEND_AUDIENCE_ID || process.env.RESEND_AUDIENCE_ID)?.trim();
     if (audienceId) {
       try {
-        await resend.contacts.create({
+        const contactPayload: any = {
           email: email,
-          firstName: firstName || '',
           audienceId: audienceId,
-        });
+        };
+        if (firstName) {
+          contactPayload.firstName = firstName;
+        }
+        
+        await resend.contacts.create(contactPayload);
       } catch (contactError) {
         console.error('Failed to add contact to audience:', contactError);
       }
