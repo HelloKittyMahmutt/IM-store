@@ -20,7 +20,7 @@ service cloud.firestore {
     // ===============================================================
 
     function hasOnlyAllowedFields(fields) {
-      return request.resource.data.keys().hasOnly(fields);
+      return request.resource.data.keys().hasAll(fields) && request.resource.data.keys().size() == fields.size();
     }
 
     function isValidEmail(email) {
@@ -55,11 +55,14 @@ service cloud.firestore {
       // Anyone can join the waitlist (create)
       allow create: if isValidWaitlistEntry(request.resource.data);
       
+      // Allow updates if they are just re-submitting their email
+      allow update: if isValidWaitlistEntry(request.resource.data) && request.resource.data.email == resource.data.email;
+      
       // Anyone can check if a specific email exists (get), but nobody can list all emails
       allow get: if true;
       
-      // Nobody can update or delete from the client
-      allow update, delete, list: if false;
+      // Nobody can delete from the client
+      allow delete, list: if false;
     }
   }
 }

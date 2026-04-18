@@ -68,7 +68,8 @@ export const Home: React.FC = () => {
           createdAt: new Date().toISOString()
         });
       } catch (error) {
-        handleFirestoreError(error, OperationType.CREATE, 'waitlist');
+        // We log the firestore error but DO NOT throw it so that the email still sends
+        console.error("Firebase waitlist save failed:", error);
       }
 
       // Try to send welcome email via Resend
