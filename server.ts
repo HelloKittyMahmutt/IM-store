@@ -91,15 +91,45 @@ app.post('/api/subscribe', async (req, res) => {
     const audienceId = (process.env.VITE_RESEND_AUDIENCE_ID || process.env.RESEND_AUDIENCE_ID)?.trim();
     if (audienceId) {
       try {
-        const contactPayload: any = {
-          email: email,
-          audienceId: audienceId,
-        };
-        if (firstName) {
-          contactPayload.firstName = firstName;
+        const key = process.env.VITE_RESEND_API_KEY || process.env.RESEND_API_KEY || '';
+        if (key) {
+          // We use the raw REST API directly to avoid SDK deprecation issues with Audiences vs Segments
+          const fetchRes = await fetch('https://api.resend.com/contacts', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${key}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: email,
+              first_name: firstName || undefined,
+              unsubscribed: false,
+              audience_id: audienceId,
+            })
+          });
+
+          if (!fetchRes.ok) {
+            const errText = await fetchRes.text();
+            console.error('Resend Contacts API failed:', errText);
+            
+            // If audience_id failed, they might have a new Segment instead. Try the new Segment approach.
+            if (errText.includes('audience_id') || errText.includes('not found')) {
+              await fetch('https://api.resend.com/contacts', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${key}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  email: email,
+                  first_name: firstName || undefined,
+                  unsubscribed: false,
+                  segments: [{ id: audienceId }],
+                })
+              });
+            }
+          }
         }
-        
-        await resend.contacts.create(contactPayload);
       } catch (contactError) {
         console.error('Failed to add contact to audience:', contactError);
         // Continue to send the welcome email even if adding to audience fails
