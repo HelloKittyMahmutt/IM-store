@@ -3,11 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { products } from '../data/products';
 import { useCurrency } from '../context/CurrencyContext';
 import { useDrop } from '../context/DropContext';
+import { ImpactCalculator } from '../components/ImpactCalculator';
+import { SwissFlag } from '../components/SwissBadge';
 
 export const Home: React.FC = () => {
   const location = useLocation();
   const { formatPrice } = useCurrency();
-  const { isUnlocked, unlock } = useDrop();
+  const { isUnlocked, unlock, lock, openStore } = useDrop();
   const [unlockEmail, setUnlockEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
@@ -18,8 +20,8 @@ export const Home: React.FC = () => {
   const [emailStatus, setEmailStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   useEffect(() => {
-    // Set target date to October 31st, 2026
-    const targetDate = new Date('2026-10-31T00:00:00Z').getTime();
+    // Set target date to December 25th, 2026
+    const targetDate = new Date('2026-12-25T00:00:00Z').getTime();
     
     const interval = setInterval(() => {
       const now = new Date().getTime();
@@ -235,7 +237,7 @@ export const Home: React.FC = () => {
                 PROJECT: I AM
               </h2>
               <p className="text-sm font-mono tracking-[0.5em] text-[#888888] uppercase mb-16 relative z-10">
-                10 . 31 . 26
+                12 . 25 . 26
               </p>
               
               {/* Countdown */}
@@ -335,14 +337,20 @@ export const Home: React.FC = () => {
             </div>
           ) : (
             <>
-              <div className="flex justify-between items-end mb-24">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
                 <div>
+                  <div className="flex flex-wrap items-center gap-3 mb-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/5 border border-black/10 text-[10px] font-mono uppercase tracking-[0.25em] text-neutral-600">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span>Store Is Live</span>
+                    </div>
+                  </div>
                   <h2 className="text-5xl md:text-8xl font-black uppercase tracking-tighter text-black">
                     Essential<br/>Gear
                   </h2>
                 </div>
-                <div className="hidden md:block">
-                  <p className="text-right max-w-xs text-sm font-bold tracking-wide uppercase border-l-2 border-black pl-4 text-black">
+                <div className="flex flex-col items-start md:items-end">
+                  <p className="text-left md:text-right max-w-xs text-xs md:text-sm font-bold tracking-wide uppercase border-l-2 md:border-l-0 md:border-r-2 border-black pl-4 md:pl-0 md:pr-4 text-black">
                     This isn’t something you wear to feel motivated. <br/>
                     It represents who you already are.
                   </p>
@@ -369,16 +377,27 @@ export const Home: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex justify-between items-start border-t border-black pt-4">
-                      <h3 className="text-lg font-black uppercase tracking-tight text-black">{product.name}</h3>
-                      <span className="text-sm font-mono text-black">{formatPrice(product.price)}</span>
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-1.5 text-neutral-500">
+                          <SwissFlag size={11} />
+                          <span className="text-[9px] font-mono tracking-widest uppercase">Designed in Switzerland</span>
+                        </div>
+                        <h3 className="text-lg font-black uppercase tracking-tight text-black">{product.name}</h3>
+                      </div>
+                      <span className="text-sm font-mono text-black font-bold">{formatPrice(product.price)}</span>
                     </div>
                   </Link>
                 ))}
               </div>
 
-              <div className="mt-24 text-center border-t border-gray-200 pt-16">
-                <p className="text-sm font-mono uppercase text-gray-500">
-                  Limited Drops. No Restocks.
+              {/* Compact Interactive Impact Calculator Under Clothing */}
+              <div className="mt-20">
+                <ImpactCalculator />
+              </div>
+
+              <div className="mt-20 text-center border-t border-gray-200 pt-12">
+                <p className="text-xs font-mono uppercase tracking-widest text-neutral-400">
+                  Limited Drops. No Restocks. Worldwide Tracked Delivery.
                 </p>
               </div>
             </>
@@ -388,7 +407,7 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Impact Section */}
-      <section id="impact" className="py-32 md:py-48 bg-[#050505] border-y border-white/10 flex items-center justify-center relative scroll-mt-24">
+      <section id="impact" className="py-32 md:py-48 bg-[#050505] border-y border-white/10 flex flex-col items-center justify-center relative scroll-mt-24">
         <div className="max-w-3xl mx-auto px-6 text-center">
           
           <div>
@@ -407,7 +426,7 @@ export const Home: React.FC = () => {
             
             <div>
               <p className="font-sans normal-case tracking-normal text-base md:text-lg">
-                IM donates <strong className="text-white border-b border-white pb-0.5">10% of profits</strong> to disabled children.
+                IM commits a <strong className="text-white border-b border-white pb-0.5">10% direct donation to disabled children</strong>.
               </p>
             </div>
 
@@ -421,7 +440,7 @@ export const Home: React.FC = () => {
             <div>
               <div className="flex flex-col items-center gap-3 text-center max-w-4xl mx-auto">
                 <p className="text-xs md:text-sm font-bold tracking-[0.3em] text-[#888888] uppercase">
-                  There are children who would give everything.
+                  Some children would give everything they have
                 </p>
                 <p className="text-xs md:text-sm font-bold tracking-[0.3em] text-[#888888] uppercase">
                   For the ability you woke up with
@@ -483,6 +502,16 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
+        </div>
+
+        {/* Call to action linking back to essentials & calculator */}
+        <div className="w-full px-6 mt-16 text-center relative z-10">
+          <a 
+            href="#collection" 
+            className="inline-block border border-white text-white px-10 py-4 text-xs font-mono uppercase tracking-[0.25em] font-bold hover:bg-white hover:text-black transition-all cursor-pointer shadow-lg"
+          >
+            Shop Essentials & Support The Mission
+          </a>
         </div>
       </section>
     </main>

@@ -74,7 +74,7 @@ export default async function handler(req: any, res: any) {
       from: 'IM <hello@imwearmovement.com>',
       to: email,
       subject: 'You are on the list.',
-      text: `STATUS: SECURED. THIS INBOX IS NOW YOUR ONLY ACCESS POINT. THERE IS NO OTHER WAY TO GET THE KEY.\n\nYour place is secured. But is your future self secured within you?\n\nYour mind is a liar, ${displayFirstName}. It invents fake limits to keep you safe. Most people surrender to that illusion.\n\nThis brand is an incubator for the obsessed. If you are reading this, you are one of them.\n\nOn 10 . 31 . 26, the countdown hits zero.\n\nThis wait is a filter. The initial hype will die. The casuals will quietly lower their standards and disappear.\n\nYour test is the silence between now and then. Act relentlessly when nobody is watching. Act like your future self, ${displayFirstName}.\n\nWhen the access key finally hits this inbox, you will realize you were never waiting for a clothing drop. You were simply waiting for the world to align with your actions. You are just collecting your trophy to elevate the work you've already done.\n\nMAINTAIN YOUR FUTURE SELF.\n\nIM - EVERYTHING I WANT TO BE.\n\n---\nTo unsubscribe, reply to this email with 'UNSUBSCRIBE'.`,
+      text: `STATUS: SECURED. THIS INBOX IS NOW YOUR ONLY ACCESS POINT. THERE IS NO OTHER WAY TO GET THE KEY.\n\nYour place is secured. But is your future self secured within you?\n\nYour mind is a liar, ${displayFirstName}. It invents fake limits to keep you safe. Most people surrender to that illusion.\n\nThis brand is an incubator for the obsessed. If you are reading this, you are one of them.\n\nOn 12 . 25 . 26, the countdown hits zero.\n\nThis wait is a filter. The initial hype will die. The casuals will quietly lower their standards and disappear.\n\nYour test is the silence between now and then. Act relentlessly when nobody is watching. Act like your future self, ${displayFirstName}.\n\nWhen the access key finally hits this inbox, you will realize you were never waiting for a clothing drop. You were simply waiting for the world to align with your actions. You are just collecting your trophy to elevate the work you've already done.\n\nMAINTAIN YOUR FUTURE SELF.\n\nIM - EVERYTHING I WANT TO BE.\n\n---\nTo unsubscribe, reply to this email with 'UNSUBSCRIBE'.`,
       html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -122,7 +122,7 @@ export default async function handler(req: any, res: any) {
                         
                         <p style="margin-bottom: 16px;">This brand is an incubator for the obsessed. If you are reading this, you are one of them.</p>
 
-                        <p style="margin-bottom: 16px;">On <strong class="text-white" style="color: #ffffff;">10 . 31 . 26</strong>, the countdown hits zero.</p>
+                        <p style="margin-bottom: 16px;">On <strong class="text-white" style="color: #ffffff;">12 . 25 . 26</strong>, the countdown hits zero.</p>
                         
                         <p style="margin-bottom: 16px;"><strong class="text-white" style="color: #ffffff;">This wait is a filter.</strong> The initial hype will die. The casuals will quietly lower their standards and disappear.</p>
                         

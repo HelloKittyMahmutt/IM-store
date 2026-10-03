@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@200;300;400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+@theme {
+  --color-im-black: #050505;
+  --color-im-dark: #0d0d0d;
+  --color-im-white: #f5f5f5;
+  --color-im-gray: #2a2a2a;
+  --color-im-light-gray: #888888;
+  --font-serif: 'Cinzel', serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #050505;
+  color: #f5f5f5;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #050505;
+  color: #f5f5f5;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Custom class fallbacks */
+.bg-im-black {
+  background-color: #050505 !important;
+}
+.bg-im-dark {
+  background-color: #0d0d0d !important;
+}
+.bg-im-gray {
+  background-color: #2a2a2a !important;
+}
+.text-im-white {
+  color: #f5f5f5 !important;
+}
+.text-im-light-gray {
+  color: #888888 !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #404040;
+}

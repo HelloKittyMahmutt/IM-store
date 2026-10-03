@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, Menu, X, ChevronDown } from 'lucide-react';
 import { useBasket } from '../context/BasketContext';
 import { useCurrency, CURRENCIES, Currency } from '../context/CurrencyContext';
+import { useDrop } from '../context/DropContext';
 
 const CurrencyDropdown = ({ isMobile = false }: { isMobile?: boolean }) => {
   const { currency, setCurrency } = useCurrency();
@@ -55,6 +56,7 @@ export const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { totalItems, setIsCartOpen } = useBasket();
   const { currency, setCurrency } = useCurrency();
+  const { isUnlocked, toggleDrop } = useDrop();
   const location = useLocation();
   const isHome = location.pathname === '/';
 
@@ -107,24 +109,10 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Shop Button / Basket */}
-          <div className="flex items-center relative z-[20] gap-3 md:gap-4">
+          <div className="flex items-center relative z-[20] gap-2 md:gap-3">
             <div className="block">
               <CurrencyDropdown />
             </div>
-            
-            {/* Dev Lock Button - Only visible in development */}
-            {process.env.NODE_ENV === 'development' && (
-              <button 
-                onClick={() => {
-                  localStorage.removeItem('im_unlocked');
-                  window.location.reload();
-                }}
-                className="hidden lg:block text-[10px] font-mono border border-red-500/50 text-red-500 px-3 py-1 uppercase tracking-widest hover:bg-red-500/10 transition-colors"
-                title="Lock Vault (Dev Only)"
-              >
-                Lock
-              </button>
-            )}
 
             <button 
               onClick={() => setIsCartOpen(true)} 

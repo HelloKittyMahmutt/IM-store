@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { products } from '../data/products';
 import { useBasket } from '../context/BasketContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { useDrop } from '../context/DropContext';
 import { ArrowLeft, Check, X } from 'lucide-react';
+import { SwissFlag } from '../components/SwissBadge';
 
 export const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +21,24 @@ export const ProductDetails: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [showSizeError, setShowSizeError] = useState(false);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+  const [sizeUnit, setSizeUnit] = useState<'cm' | 'in'>('cm');
+
+  const sizeChartData = {
+    cm: [
+      { size: 'XS', chest: '84–88', waist: '70–76', length: '68' },
+      { size: 'S', chest: '88–94', waist: '76–82', length: '70' },
+      { size: 'M', chest: '94–100', waist: '82–88', length: '72' },
+      { size: 'L', chest: '100–106', waist: '88–94', length: '74' },
+      { size: 'XL', chest: '106–112', waist: '94–100', length: '76' },
+    ],
+    in: [
+      { size: 'XS', chest: '33–35', waist: '27.5–30', length: '26.8' },
+      { size: 'S', chest: '35–37', waist: '30–32', length: '27.5' },
+      { size: 'M', chest: '37–39', waist: '32–34.5', length: '28.3' },
+      { size: 'L', chest: '39–42', waist: '34.5–37', length: '29.1' },
+      { size: 'XL', chest: '42–44', waist: '37–39.5', length: '29.9' },
+    ],
+  };
 
   useEffect(() => {
     if (!isUnlocked) {
@@ -32,16 +52,21 @@ export const ProductDetails: React.FC = () => {
 
   if (!isUnlocked) return null;
 
-  // Prevent scrolling when modal is open
+  // Prevent scrolling when modal is open and handle Escape key
   useEffect(() => {
     if (isSizeGuideOpen) {
       document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setIsSizeGuideOpen(false);
+      };
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        document.removeEventListener('keydown', handleKeyDown);
+      };
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [isSizeGuideOpen]);
 
   if (!product) {
@@ -127,11 +152,7 @@ export const ProductDetails: React.FC = () => {
             </h1>
             <p className="text-lg font-mono mb-3">{formatPrice(product.price)}</p>
             
-            <div className="w-full h-px bg-gray-200 mb-3"></div>
-            
-            <p className="text-sm text-gray-600 leading-relaxed mb-3">
-              {product.description}
-            </p>
+            <div className="w-full h-px bg-gray-200 mb-4"></div>
 
             {product.quote && (
               <div className="mb-3 py-2 border-l-2 border-black pl-4">
@@ -140,6 +161,13 @@ export const ProductDetails: React.FC = () => {
                 </p>
               </div>
             )}
+
+            <div className="flex items-center gap-2 mb-4">
+              <SwissFlag size={14} />
+              <span className="text-[11px] font-sans font-semibold tracking-[0.16em] uppercase text-neutral-800">
+                Engineered and prototyped in Switzerland
+              </span>
+            </div>
 
             <div className="grid grid-cols-2 gap-6 mb-4">
               {product.details && (
@@ -241,70 +269,119 @@ export const ProductDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* Size Guide Modal */}
-      {isSizeGuideOpen && (
+      {/* Size Guide Modal - Single compact rectangle without internal scroll */}
+      {isSizeGuideOpen && createPortal(
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm"
+          className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm p-4 flex items-center justify-center animate-in fade-in duration-150"
           onClick={() => setIsSizeGuideOpen(false)}
         >
           <div 
-            className="bg-white w-full max-w-md p-8 relative shadow-2xl"
+            className="bg-white w-full max-w-lg p-6 sm:p-7 relative shadow-2xl border border-black/10 my-auto animate-in zoom-in-95 duration-150"
             onClick={e => e.stopPropagation()}
           >
+            {/* Top Right Cross Only */}
             <button 
+              type="button"
               onClick={() => setIsSizeGuideOpen(false)}
-              className="absolute top-6 right-6 text-gray-400 hover:text-black transition-colors"
+              className="absolute top-5 right-5 text-black hover:opacity-60 transition-opacity p-1 cursor-pointer"
               aria-label="Close size guide"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 stroke-[2.25]" />
             </button>
             
-            <h3 className="text-2xl font-black uppercase tracking-tighter mb-8">Size Guide</h3>
-            
-            <div className="space-y-8 text-sm">
+            {/* Modal Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b-2 border-black pb-4 pr-8">
               <div>
-                <h4 className="font-bold uppercase tracking-widest mb-4">Measurements</h4>
-                <div className="border-y border-gray-200 py-4 font-mono text-sm space-y-3">
-                  <div className="flex justify-between">
-                    <span className="font-bold">XS</span>
-                    <span className="text-gray-600">Chest: 84–88 cm</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-bold">S</span>
-                    <span className="text-gray-600">Chest: 88–94 cm</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-bold">M</span>
-                    <span className="text-gray-600">Chest: 94–100 cm</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-bold">L</span>
-                    <span className="text-gray-600">Chest: 100–106 cm</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-bold">XL</span>
-                    <span className="text-gray-600">Chest: 106–112 cm</span>
-                  </div>
-                </div>
+                <h3 className="text-2xl font-black uppercase tracking-tighter text-black">Size Guide</h3>
+                <p className="text-[11px] font-sans font-bold tracking-[0.16em] uppercase text-black mt-0.5">
+                  Athletic Taper Silhouette
+                </p>
               </div>
 
-              <div className="space-y-3 text-gray-600">
-                <p className="flex items-start gap-3">
-                  <span className="block w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
-                  <span>Fits true to size.</span>
+              {/* Unit Toggle */}
+              <div className="inline-flex self-start sm:self-auto border-2 border-black p-0.5 text-xs font-mono">
+                <button
+                  type="button"
+                  onClick={() => setSizeUnit('cm')}
+                  className={`px-3 py-1 font-bold transition-colors cursor-pointer ${
+                    sizeUnit === 'cm' ? 'bg-black text-white' : 'text-black hover:bg-neutral-100'
+                  }`}
+                >
+                  CM
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSizeUnit('in')}
+                  className={`px-3 py-1 font-bold transition-colors cursor-pointer ${
+                    sizeUnit === 'in' ? 'bg-black text-white' : 'text-black hover:bg-neutral-100'
+                  }`}
+                >
+                  INCHES
+                </button>
+              </div>
+            </div>
+            
+            {/* Content Container (No scrollbar - fits naturally) */}
+            <div className="space-y-5">
+              {/* Measurement Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b-2 border-black font-mono uppercase text-[11px] tracking-wider text-black">
+                      <th className="pb-2 font-black">Size</th>
+                      <th className="pb-2 font-black">Chest (Fitted)</th>
+                      <th className="pb-2 font-black">Waist (Loose)</th>
+                      <th className="pb-2 font-black">Length</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-black/10 font-sans text-xs">
+                    {sizeChartData[sizeUnit].map((row) => {
+                      const isSelected = selectedSize === row.size;
+                      return (
+                        <tr 
+                          key={row.size}
+                          className={`transition-colors ${isSelected ? 'bg-neutral-100' : 'hover:bg-neutral-50'}`}
+                        >
+                          <td className="py-2.5">
+                            <span className="inline-flex items-center justify-center px-2.5 py-0.5 bg-black text-white font-mono text-xs font-bold">
+                              {row.size}
+                            </span>
+                          </td>
+                          <td className="py-2.5 text-black font-semibold">{row.chest} {sizeUnit}</td>
+                          <td className="py-2.5 text-black font-semibold">{row.waist} {sizeUnit}</td>
+                          <td className="py-2.5 text-black font-semibold">{row.length} {sizeUnit}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Fit & Model Notes */}
+              <div className="border-t-2 border-black/10 pt-4 space-y-2 text-xs text-black">
+                <p className="flex items-start gap-2.5">
+                  <span className="block w-1.5 h-1.5 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
+                  <span className="text-black font-medium leading-relaxed">
+                    <strong className="text-black font-bold">Athletic Taper:</strong> Form-fitting across the shoulders and chest with a free, relaxed drape at the waist.
+                  </span>
                 </p>
-                <p className="flex items-start gap-3">
-                  <span className="block w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
-                  <span>Size up for a looser fit.</span>
+                <p className="flex items-start gap-2.5">
+                  <span className="block w-1.5 h-1.5 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
+                  <span className="text-black font-medium leading-relaxed">
+                    <strong className="text-black font-bold">4-Way Stretch:</strong> Shape-memory fabric. Take true size for an athletic silhouette, or size up for a relaxed drape.
+                  </span>
                 </p>
-                <p className="flex items-start gap-3">
-                  <span className="block w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
-                  <span>Model is 180 cm wearing size M.</span>
+                <p className="flex items-start gap-2.5">
+                  <span className="block w-1.5 h-1.5 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
+                  <span className="text-black font-medium leading-relaxed">
+                    <strong className="text-black font-bold">Model Specs:</strong> {sizeUnit === 'cm' ? '190 cm, 90 kg wearing size L.' : "6'3\", 198 lbs wearing size L."}
+                  </span>
                 </p>
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

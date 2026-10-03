@@ -122,7 +122,17 @@ export const CartDrawer: React.FC = () => {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-gray-200 p-6 bg-gray-50">
-            <div className="flex justify-between items-center mb-4">
+            {/* Impact Badge */}
+            <div className="mb-4 p-3 bg-black/5 border border-black/10 rounded-sm flex items-center justify-between text-xs">
+              <span className="font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
+                <span>🤍</span> 10% Impact
+              </span>
+              <span className="font-mono font-bold text-black">
+                {formatPrice(Math.round(totalPrice * 0.10))}
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-bold uppercase tracking-widest">Subtotal</span>
               <span className="text-xl font-mono font-bold">{formatPrice(totalPrice)}</span>
             </div>
